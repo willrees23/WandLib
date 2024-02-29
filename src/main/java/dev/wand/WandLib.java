@@ -1,5 +1,6 @@
 package dev.wand;
 
+import dev.dejvokep.boostedyaml.YamlDocument;
 import dev.wand.inventory.AbstractInventory;
 import dev.wand.inventory.InventoryListener;
 import lombok.Getter;
@@ -8,7 +9,10 @@ import org.bukkit.entity.Player;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 @Getter
@@ -29,6 +33,35 @@ public class WandLib {
         PluginManager pm = instance.getServer().getPluginManager();
         pm.registerEvents(new InventoryListener(), instance);
     }
+
+    /**
+     * Creates config files. Does not saveDefaultConfig().
+     * @param configs The names of the config files to create
+     * @return A map of the config names and their respective YamlDocument
+     * @see #createConfigs(boolean, String...)
+     */
+    public static HashMap<String,YamlDocument> createConfigs(String... configs) {
+        return createConfigs(false, configs);
+    }
+
+    public static HashMap<String,YamlDocument> createConfigs(boolean defaultConfig, String... configs) {
+        if (defaultConfig) instance.saveDefaultConfig();
+
+        HashMap<String, YamlDocument> documents = new HashMap<>();
+        for (String config : configs) {
+            String path = instance.getDataFolder().getPath();
+            YamlDocument document;
+            try {
+                document = YamlDocument.create(new File(path, config + ".yml"));
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+            documents.put(config, document);
+        }
+
+        return documents;
+    }
+
     public static void log(String message) {
         instance.getLogger().info(message);
     }

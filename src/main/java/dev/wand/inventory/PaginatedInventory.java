@@ -45,14 +45,14 @@ public class PaginatedInventory extends AbstractInventory {
         if (page < (int) Math.ceil((double) content.size() / pageSize) - 1) {
             inventory.setItem(rows * 9 - 1, nextPageItem.build());
         }
-        getOwner().openInventory(inventory);
+        owner.openInventory(inventory);
     }
 
     @Override
     public void handleClick(InventoryClickEvent event) {
         Player player = (Player) event.getWhoClicked();
 
-        if (player != getOwner()) {
+        if (player != owner) {
             return;
         }
 
@@ -119,7 +119,7 @@ public class PaginatedInventory extends AbstractInventory {
                 inventory.setItem(rows * 9 - 1, InventoryUtils.createItemStack(Material.ARROW, ChatColor.GRAY + "Next page"));
             }
 
-            getOwner().openInventory(inventory);
+            owner.openInventory(inventory);
         }
 
     }
